@@ -132,6 +132,7 @@ public void showFrag1() {
 
             }
             ft.replace(R.id.FragLayout, f2);
+            ft.addToBackStack ("myFrag2");
             ft.commit();
 
         }else {
@@ -158,7 +159,7 @@ public void showFrag1() {
                 Log.w("MainActivity","f2 attached"+ R.layout.activity_main); //what should we do if f1 doesn't exist anymore?  How do we check and how do we fix?
 
             }
-
+            ft.addToBackStack ("myFrag2");
             ft.commit();
         }
     }
@@ -182,7 +183,7 @@ public void showFrag1() {
         if (f3.isHidden() == true){
             ft.show(f3);
         }
-
+        ft.addToBackStack ("myFrag3");
         ft.commit();
     }
 }
