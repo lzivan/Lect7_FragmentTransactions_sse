@@ -8,6 +8,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -95,37 +96,93 @@ private
     }
 
 public void showFrag1() {
+        if (f1 == null) {
+            f1 = new Frag_One();
+            Log.w("MainActivity","nnooo"+ R.layout.activity_main);
+        }else {
+            f1 = (Frag_One) fm.findFragmentByTag("tag1");
+            Log.w("MainActivity","Hello"+ R.layout.activity_main); //what should we do if f1 doesn't exist anymore?  How do we check and how do we fix?
+        }
+    FragmentTransaction ft = fm.beginTransaction ();
+//Create a reference to a fragment transaction.
+    ft.replace(R.id.FragLayout, f1);
+    if (f1.isDetached() == true){
+        f1 = new Frag_One();
+        ft.replace(R.id.FragLayout, f1);
+        ft.attach(f1);
+        Log.w("MainActivity","f1 attached"+ R.layout.activity_main); //what should we do if f1 doesn't exist anymore?  How do we check and how do we fix?
 
-        f1 = (Frag_One) fm.findFragmentByTag("tag1");   //what should we do if f1 doesn't exist anymore?  How do we check and how do we fix?
-
-    FragmentTransaction ft = fm.beginTransaction ();  //Create a reference to a fragment transaction.
-
+    }
     ft.hide(f2);
     ft.hide(f3);
-    ft.show(f1);   //why does this not *always* crash?
+    ft.show(f1);
+
+ //why does this not *always* crash?
     ft.commit();
 }
 
     public void showFrag2() {
 
-        if (f2 == null)
-          f2 = new Frag_Two();
+        if (f2 == null) {
+            f2 = new Frag_Two();
+            FragmentTransaction ft = fm.beginTransaction ();
+            if (f2.isAdded() == false) {
+                ft.add(R.id.FragLayout, f2, "tag2");
+                Log.w("MainActivity","f2 created"+ R.layout.activity_main); //what should we do if f1 doesn't exist anymore?  How do we check and how do we fix?
+
+            }
+            ft.replace(R.id.FragLayout, f2);
+            ft.commit();
+
+        }else {
 
 
-        FragmentTransaction ft = fm.beginTransaction (); //Create a reference to a fragment transaction and start the transaction.
-        ft.replace(R.id.FragLayout, f2);
-        ft.addToBackStack ("myFrag1");  //Q: What is the back stack and why do we do this? _______________
-        ft.show(f2);
-        ft.commit();
+
+            FragmentTransaction ft = fm.beginTransaction();
+            if (f2.isAdded() == true) {
+                f2 = (Frag_Two) fm.findFragmentByTag("tag2");
+            }else{
+                ft.add(R.id.FragLayout, f2, "tag2");
+                //Create a reference to a fragment transaction and start the transaction.
+            }
+            ft.replace(R.id.FragLayout, f2);
+            ft.addToBackStack("myFrag1");  //Q: What is the back stack and why do we do this? _______________
+            if (f2.isHidden() == true){
+                ft.show(f2);
+            }
+
+            if (f2.isDetached() == true){
+                f2 = new Frag_Two();
+                ft.replace(R.id.FragLayout, f2);
+                ft.attach(f2);
+                Log.w("MainActivity","f2 attached"+ R.layout.activity_main); //what should we do if f1 doesn't exist anymore?  How do we check and how do we fix?
+
+            }
+
+            ft.commit();
+        }
     }
 
 
     public void showFrag3() {
+        if (f3 == null)
+            f3 = new Frag_Three();
+        if (f2 == null)
+            f2 = new Frag_Two();
+        if (f1 == null)
+            f1 = new Frag_One();
 
-        FragmentTransaction ft = fm.beginTransaction ();  //Create a reference to a fragment transaction.
-        ft.detach(f1);   //what would happen if f1, f2, or f3 were null?  how would we check and fix this?
+        FragmentTransaction ft = fm.beginTransaction ();
+        ft.replace(R.id.FragLayout, f3);
+//Create a reference to a fragment transaction.
+        ft.detach(f1);//what would happen if f1, f2, or f3 were null?  how would we check and fix this?
         ft.detach(f2);
         ft.attach(f3);
+
+        if (f3.isHidden() == true){
+            ft.show(f3);
+        }
+
         ft.commit();
     }
 }
